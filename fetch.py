@@ -66,10 +66,10 @@ def fetch_crypto(crypto):
                
                if varianceBtc > 0.005 or varianceBtc < -0.005:
                   if newBtcPrice > btcPrice:
-                     print('  BTC - tweetting price up...\t\t\t[ OK ]')
+                     print('  BTC - tweetting price up...\t\t\t[  OK  ]')
                      tweet(f'Bitcoin subiu \U0001F60A   R${newBtcRounded}\n\U0001F4C8 Variação +{varianceOutputBtc}%  +R${differenceBtc}\n\n{req}')
                   else:
-                     print('  BTC - tweetting price down...\t\t\t[ OK ]')
+                     print('  BTC - tweetting price down...\t\t\t[  OK  ]')
                      differenceBtc *= -1
                      tweet(f'Bitcoin caiu \U0001F633   R${newBtcRounded}\n\U0001F4C9 Variação {varianceOutputBtc}%  -R${differenceBtc}\n\n{req}')
                
@@ -77,7 +77,7 @@ def fetch_crypto(crypto):
                   btcRounded = round(newBtcPrice,2)
                   
                else:
-                  print(f'  BTC - Not enough variance.\t{varianceBtc}%\t\t[ FAIL ]')
+                  print(f'  BTC - Not enough variance\t{varianceBtc}%\t\t[ FAIL ]')
                
             if not newEthPrice == ethPrice:
                varianceEth = round(calculate_variance(ethPrice, newEthPrice), 4)          
@@ -87,16 +87,16 @@ def fetch_crypto(crypto):
                
                if varianceEth > 0.007 or varianceEth < -0.007:
                   if newEthPrice > ethPrice:
-                     print('  ETH - tweetting price up...\t\t\t[ OK ]')
+                     print('  ETH - tweetting price up...\t\t\t[  OK  ]')
                      tweet(f'Ethereum subiu \U0001F60A   R${newEthRounded}\n\U0001F4C8 Variação +{varianceOutputEth}%  +R${differenceEth}\n\n{req}')
                   else:
-                     print('  ETH - tweetting price down...\t\t\t[ OK ]')
+                     print('  ETH - tweetting price down...\t\t\t[  OK  ]')
                      tweet(f'Ethereum caiu \U0001F633   R${newEthRounded}\n\U0001F4C9 Variação {varianceOutputEth}%  -R${differenceEth}\n\n{req}')
                
                   ethPrice = newEthPrice
                   ethRounded = round(newEthPrice,2)
                else:
-                  print(f'  ETH - Not enough variance.\t{varianceEth}%\t\t[ FAIL ]')
+                  print(f'  ETH - Not enough variance\t{varianceEth}%\t\t[ FAIL ]')
             
             time.sleep(300)
             
