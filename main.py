@@ -1,4 +1,5 @@
 import threading
+import requests
 from fetch import fetch_crypto
 
 exitFlag = 0

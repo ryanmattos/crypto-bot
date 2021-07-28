@@ -5,11 +5,7 @@ name = "pypi"
 
 [packages]
 tweepy = "*"
-beautifulsoup4 = "*"
-cookiejar = "*"
-currencyconverter = "*"
 requests = "*"
-gunicorn = "*"
 
 [dev-packages]
 
