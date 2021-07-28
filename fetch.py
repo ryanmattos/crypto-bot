@@ -30,8 +30,11 @@ def fetch_crypto(crypto):
    time.sleep(10)
    while True:
       try:         
-         print("fetching...")
+         print("\n[ FETCHING INFO ]")
          response = requests.get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest',params=params, headers={'X-CMC_PRO_API_KEY': os.environ['CMC_API_KEY']}).json()
+         
+         t = time.localtime()
+         req = time.strftime("%H:%M", t)
          
          newBtcPrice = response['data']['BTC']['quote']['BRL']['price']
          newEthPrice = response['data']['ETH']['quote']['BRL']['price']
@@ -41,8 +44,8 @@ def fetch_crypto(crypto):
          newBtcRounded = round(newBtcPrice,2)
          newEthRounded = round(newEthPrice,2)
 
-         print(f'BTC - old: {btcPrice} new: {newBtcPrice}')
-         print(f'ETH - old: {ethPrice} new: {newEthPrice}')
+         print(f'  BTC - from: R${btcRounded}\tto: R${newBtcRounded}')
+         print(f'  ETH - from: R${ethRounded}\tto: R${newEthRounded}')
          
          # check if new hash is same as the previous hash
          if newBtcPrice == btcPrice or newEthPrice == ethPrice:
@@ -53,7 +56,7 @@ def fetch_crypto(crypto):
          # if something changed in the hashes
          else:
             # notify
-            print('prices have changed...')
+            print('[ PRICES CHANGED ]')
             
             if not newBtcPrice == btcPrice:
                varianceBtc = round(calculate_variance(btcPrice, newBtcPrice), 4)
@@ -63,16 +66,18 @@ def fetch_crypto(crypto):
                
                if varianceBtc > 0.005 or varianceBtc < -0.005:
                   if newBtcPrice > btcPrice:
-                     print('BTC - twitting price up...')
-                     tweet(f'Bitcoin subiu \U0001F60A   R${newBtcRounded}\n\U0001F4C8 Variação +{varianceOutputBtc}%  +R${differenceBtc}')
+                     print('  BTC - twitting price up...')
+                     tweet(f'Bitcoin subiu \U0001F60A   R${newBtcRounded}\n\U0001F4C8 Variação +{varianceOutputBtc}%  +R${differenceBtc}\n\n{req}')
                   else:
-                     print('BTC - twitting price down...')
+                     print('  BTC - twitting price down...')
                      differenceBtc *= -1
-                     tweet(f'Bitcoin caiu \U0001F633   R${newBtcRounded}\n\U0001F4C9 Variação {varianceOutputBtc}%  -R${differenceBtc}')
+                     tweet(f'Bitcoin caiu \U0001F633   R${newBtcRounded}\n\U0001F4C9 Variação {varianceOutputBtc}%  -R${differenceBtc}\n\n{req}')
                
                   btcPrice = newBtcPrice
+                  btcRounded = round(newBtcPrice,2)
+                  
                else:
-                  print(f'BTC - but not changed too much...\nvariance {varianceBtc}')
+                  print(f'  BTC - Not enough variance.\t{varianceBtc}%\t\t[ FAIL ]')
                
             if not newEthPrice == ethPrice:
                varianceEth = round(calculate_variance(ethPrice, newEthPrice), 4)          
@@ -82,15 +87,16 @@ def fetch_crypto(crypto):
                
                if varianceEth > 0.007 or varianceEth < -0.007:
                   if newEthPrice > ethPrice:
-                     print('ETH - twitting price up...')
-                     tweet(f'Ethereum subiu \U0001F60A   R${newEthRounded}\n\U0001F4C8 Variação +{varianceOutputEth}%  +R${differenceEth}')
+                     print('  ETH - twitting price up...')
+                     tweet(f'Ethereum subiu \U0001F60A   R${newEthRounded}\n\U0001F4C8 Variação +{varianceOutputEth}%  +R${differenceEth}\n\n{req}')
                   else:
-                     print('ETH - twitting price down...')
-                     tweet(f'Ethereum caiu \U0001F633   R${newEthRounded}\n\U0001F4C9 Variação {varianceOutputEth}%  -R${differenceEth}')
+                     print('  ETH - twitting price down...')
+                     tweet(f'Ethereum caiu \U0001F633   R${newEthRounded}\n\U0001F4C9 Variação {varianceOutputEth}%  -R${differenceEth}\n\n{req}')
                
                   ethPrice = newEthPrice
+                  ethRounded = round(newEthPrice,2)
                else:
-                  print(f'ETH - but not changed too much...\nvariance {varianceEth}')
+                  print(f'  ETH - Not enough variance.\t{varianceEth}%\t\t[ FAIL ]')
             
             time.sleep(300)
             
