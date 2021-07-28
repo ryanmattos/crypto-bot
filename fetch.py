@@ -66,10 +66,10 @@ def fetch_crypto(crypto):
                
                if varianceBtc > 0.005 or varianceBtc < -0.005:
                   if newBtcPrice > btcPrice:
-                     print('  BTC - twitting price up...')
+                     print('  BTC - tweetting price up...\t\t\t[ OK ]')
                      tweet(f'Bitcoin subiu \U0001F60A   R${newBtcRounded}\n\U0001F4C8 Variação +{varianceOutputBtc}%  +R${differenceBtc}\n\n{req}')
                   else:
-                     print('  BTC - twitting price down...')
+                     print('  BTC - tweetting price down...\t\t\t[ OK ]')
                      differenceBtc *= -1
                      tweet(f'Bitcoin caiu \U0001F633   R${newBtcRounded}\n\U0001F4C9 Variação {varianceOutputBtc}%  -R${differenceBtc}\n\n{req}')
                
@@ -87,10 +87,10 @@ def fetch_crypto(crypto):
                
                if varianceEth > 0.007 or varianceEth < -0.007:
                   if newEthPrice > ethPrice:
-                     print('  ETH - twitting price up...')
+                     print('  ETH - tweetting price up...\t\t\t[ OK ]')
                      tweet(f'Ethereum subiu \U0001F60A   R${newEthRounded}\n\U0001F4C8 Variação +{varianceOutputEth}%  +R${differenceEth}\n\n{req}')
                   else:
-                     print('  ETH - twitting price down...')
+                     print('  ETH - tweetting price down...\t\t\t[ OK ]')
                      tweet(f'Ethereum caiu \U0001F633   R${newEthRounded}\n\U0001F4C9 Variação {varianceOutputEth}%  -R${differenceEth}\n\n{req}')
                
                   ethPrice = newEthPrice
