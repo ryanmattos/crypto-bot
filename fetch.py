@@ -52,7 +52,7 @@ def fetch_crypto(crypto):
          
          # check if new hash is same as the previous hash
          if newBtcPrice == btcPrice or newEthPrice == ethPrice:
-            time.sleep(300)
+            time.sleep(650)
             
             continue
 
@@ -101,7 +101,7 @@ def fetch_crypto(crypto):
                else:
                   print(f'  ETH - Not enough variance\t{abs(varianceEth)}%\t\t[ FAIL ]')
             
-            time.sleep(300)
+            time.sleep(650)
             
             continue
          
