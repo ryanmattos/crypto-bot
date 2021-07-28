@@ -1,7 +1,9 @@
 import os
 import time
+from datetime import datetime,timezone
 # from urllib.request import urlopen, Request, build_opener, HTTPCookieProcessor
 import requests
+import pytz
 import logging as cryptoLogging
 from notify import tweet
 
@@ -19,7 +21,8 @@ def fetch_crypto(crypto):
    ethPrice = response['data']['ETH']['quote']['BRL']['price']
    # print(f'bitcoin: {btcPrice} | eth: {ethPrice}')
    
-
+   tz = pytz.timezone('Brazil/East')
+   
    btcRounded = round(btcPrice,2)
    ethRounded = round(ethPrice,2)
 
@@ -33,8 +36,8 @@ def fetch_crypto(crypto):
          print("\n[ FETCHING INFO ]")
          response = requests.get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest',params=params, headers={'X-CMC_PRO_API_KEY': os.environ['CMC_API_KEY']}).json()
          
-         t = time.localtime()
-         req = time.strftime("%H:%M", t)
+         dt = datetime.now(tz)
+         req = datetime.strftime(dt, "%H:%M")
          
          newBtcPrice = response['data']['BTC']['quote']['BRL']['price']
          newEthPrice = response['data']['ETH']['quote']['BRL']['price']
@@ -67,17 +70,17 @@ def fetch_crypto(crypto):
                if varianceBtc > 0.005 or varianceBtc < -0.005:
                   if newBtcPrice > btcPrice:
                      print('  BTC - tweetting price up...\t\t\t[  OK  ]')
-                     tweet(f'Bitcoin subiu \U0001F60A   R${newBtcRounded}\n\U0001F4C8 Variação +{varianceOutputBtc}%  +R${differenceBtc}\n\n{req}')
+                     tweet(f'Bitcoin subiu \U0001F60A   R${newBtcRounded}\n\U0001F4C8 Variação +{varianceOutputBtc}%  +R${differenceBtc}\n\nUpdated at {req}h')
                   else:
                      print('  BTC - tweetting price down...\t\t\t[  OK  ]')
                      differenceBtc *= -1
-                     tweet(f'Bitcoin caiu \U0001F633   R${newBtcRounded}\n\U0001F4C9 Variação {varianceOutputBtc}%  -R${differenceBtc}\n\n{req}')
+                     tweet(f'Bitcoin caiu \U0001F633   R${newBtcRounded}\n\U0001F4C9 Variação {varianceOutputBtc}%  -R${differenceBtc}\n\nUpdated at {req}h')
                
                   btcPrice = newBtcPrice
                   btcRounded = round(newBtcPrice,2)
                   
                else:
-                  print(f'  BTC - Not enough variance\t{varianceBtc}%\t\t[ FAIL ]')
+                  print(f'  BTC - Not enough variance\t{abs(varianceBtc)}%\t\t[ FAIL ]')
                
             if not newEthPrice == ethPrice:
                varianceEth = round(calculate_variance(ethPrice, newEthPrice), 4)          
@@ -88,15 +91,15 @@ def fetch_crypto(crypto):
                if varianceEth > 0.007 or varianceEth < -0.007:
                   if newEthPrice > ethPrice:
                      print('  ETH - tweetting price up...\t\t\t[  OK  ]')
-                     tweet(f'Ethereum subiu \U0001F60A   R${newEthRounded}\n\U0001F4C8 Variação +{varianceOutputEth}%  +R${differenceEth}\n\n{req}')
+                     tweet(f'Ethereum subiu \U0001F60A   R${newEthRounded}\n\U0001F4C8 Variação +{varianceOutputEth}%  +R${differenceEth}\n\nUpdated at {req}h')
                   else:
                      print('  ETH - tweetting price down...\t\t\t[  OK  ]')
-                     tweet(f'Ethereum caiu \U0001F633   R${newEthRounded}\n\U0001F4C9 Variação {varianceOutputEth}%  -R${differenceEth}\n\n{req}')
+                     tweet(f'Ethereum caiu \U0001F633   R${newEthRounded}\n\U0001F4C9 Variação {varianceOutputEth}%  -R${differenceEth}\n\nUpdated at {req}h')
                
                   ethPrice = newEthPrice
                   ethRounded = round(newEthPrice,2)
                else:
-                  print(f'  ETH - Not enough variance\t{varianceEth}%\t\t[ FAIL ]')
+                  print(f'  ETH - Not enough variance\t{abs(varianceEth)}%\t\t[ FAIL ]')
             
             time.sleep(300)
             
