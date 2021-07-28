@@ -69,12 +69,12 @@ def fetch_crypto(crypto):
                
                if varianceBtc > 0.005 or varianceBtc < -0.005:
                   if newBtcPrice > btcPrice:
-                     print('  BTC - tweetting price up...\t\t\t[  OK  ]')
-                     tweet(f'Bitcoin subiu \U0001F60A   R${newBtcRounded}\n\U0001F4C8 Variação +{varianceOutputBtc}%  +R${differenceBtc}\n\nUpdated at {req}h')
+                     print('  BTC - tweeting price up...\t\t\t[  OK  ]')
+                     tweet(f'\U0001F60A [BTC] Bitcoin has gone up\n\U0001F4B5 R${newBtcRounded}\n\U0001F4C8 Variance +{varianceOutputBtc}%  +R${differenceBtc}\n\nUpdated at {req}h')
                   else:
-                     print('  BTC - tweetting price down...\t\t\t[  OK  ]')
+                     print('  BTC - tweeting price down...\t\t\t[  OK  ]')
                      differenceBtc *= -1
-                     tweet(f'Bitcoin caiu \U0001F633   R${newBtcRounded}\n\U0001F4C9 Variação {varianceOutputBtc}%  -R${differenceBtc}\n\nUpdated at {req}h')
+                     tweet(f'\U0001F633 [BTC] Bitcoin has gone down\n\U0001F4B5 R${newBtcRounded}\n\U0001F4C9 Variance {varianceOutputBtc}%  -R${differenceBtc}\n\nUpdated at {req}h')
                
                   btcPrice = newBtcPrice
                   btcRounded = round(newBtcPrice,2)
@@ -90,11 +90,11 @@ def fetch_crypto(crypto):
                
                if varianceEth > 0.007 or varianceEth < -0.007:
                   if newEthPrice > ethPrice:
-                     print('  ETH - tweetting price up...\t\t\t[  OK  ]')
-                     tweet(f'Ethereum subiu \U0001F60A   R${newEthRounded}\n\U0001F4C8 Variação +{varianceOutputEth}%  +R${differenceEth}\n\nUpdated at {req}h')
+                     print('  ETH - tweeting price up...\t\t\t[  OK  ]')
+                     tweet(f'\U0001F60A [ETH] Ethereum has gone up\n\U0001F4B5 R${newEthRounded}\n\U0001F4C8 Variance +{varianceOutputEth}%  +R${differenceEth}\n\nUpdated at {req}h')
                   else:
-                     print('  ETH - tweetting price down...\t\t\t[  OK  ]')
-                     tweet(f'Ethereum caiu \U0001F633   R${newEthRounded}\n\U0001F4C9 Variação {varianceOutputEth}%  -R${differenceEth}\n\nUpdated at {req}h')
+                     print('  ETH - tweeting price down...\t\t\t[  OK  ]')
+                     tweet(f'\U0001F633 [ETH] Ethereum has gone down\n\U0001F4B5 R${newEthRounded}\n\U0001F4C9 Variance {varianceOutputEth}%  -R${differenceEth}\n\nUpdated at {req}h')
                
                   ethPrice = newEthPrice
                   ethRounded = round(newEthPrice,2)
