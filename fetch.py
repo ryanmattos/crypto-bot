@@ -6,7 +6,7 @@ import logging as cryptoLogging
 from crypto import Crypto
 from functions import checkChanges
 
-WAIT_REQUEST = 10
+WAIT_REQUEST = 600
 
 def fetch_crypto():
    cryptoLogging.basicConfig(filename='logs/cryptos.log', filemode='w', format='%(asctime)s:: %(message)s', level=cryptoLogging.INFO)
