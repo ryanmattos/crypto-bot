@@ -2,7 +2,7 @@ import os
 import tweepy
 import logging
 
-logging.basicConfig(filename='.log', filemode='w', format='%(asctime)s:: %(levelname)s - %(message)s', level=logging.INFO)
+logging.basicConfig(filename='logs/.log', filemode='w', format='%(asctime)s:: %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger()
 
 def create_api():

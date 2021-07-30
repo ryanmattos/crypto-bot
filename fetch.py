@@ -1,107 +1,66 @@
 import os
 import time
-from datetime import datetime,timezone
 # from urllib.request import urlopen, Request, build_opener, HTTPCookieProcessor
 import requests
-import pytz
 import logging as cryptoLogging
-from notify import tweet
+from crypto import Crypto
+from functions import checkChanges
 
-def calculate_variance(oldV, newV):
-   return (float(oldV) - float(newV)) / float(oldV) * -1
+WAIT_REQUEST = 10
 
-def fetch_crypto(crypto):
-   cryptoLogging.basicConfig(filename='cryptos.log', filemode='w', format='%(asctime)s:: %(message)s', level=cryptoLogging.INFO)
+def fetch_crypto():
+   cryptoLogging.basicConfig(filename='logs/cryptos.log', filemode='w', format='%(asctime)s:: %(message)s', level=cryptoLogging.INFO)
    cryptoLogger = cryptoLogging.getLogger()
 
    params = {'symbol': 'btc,eth', 'convert': 'BRL'}
    response = requests.get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest',params=params, headers={'X-CMC_PRO_API_KEY': os.environ['CMC_API_KEY']}).json()
    
    btcPrice = response['data']['BTC']['quote']['BRL']['price']
-   ethPrice = response['data']['ETH']['quote']['BRL']['price']
-   # print(f'bitcoin: {btcPrice} | eth: {ethPrice}')
-   
-   tz = pytz.timezone('Brazil/East')
+   ethPrice = response['data']['ETH']['quote']['BRL']['price']   
    
    btcRounded = round(btcPrice,2)
    ethRounded = round(ethPrice,2)
 
+   #set the old btc now
+   oldBtc = Crypto(slug='BTC', name='Bitcoin', price=btcPrice, formatted=btcRounded, cap=0.005)
+   oldEth = Crypto(slug='ETH', name='Ethereum', price=ethPrice, formatted=ethRounded, cap=0.007)
+   
+   #set the cryptos that will be the latest ones
+   btc = Crypto(slug='BTC', name='Bitcoin', price=btcPrice, formatted=btcRounded, cap=0.005)
+   eth = Crypto(slug='ETH', name='Ethereum', price=ethPrice, formatted=ethRounded, cap=0.007)
+   
    cryptoLogger.info(f'FIRST LOG: BTC\tR${btcRounded}')
    cryptoLogger.info(f'FIRST LOG: ETH\tR${ethRounded}')
    
    print("running")
-   time.sleep(10)
+   time.sleep(WAIT_REQUEST)
    while True:
       try:         
          print("\n[ FETCHING INFO ]")
          response = requests.get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest',params=params, headers={'X-CMC_PRO_API_KEY': os.environ['CMC_API_KEY']}).json()
          
-         dt = datetime.now(tz)
-         req = datetime.strftime(dt, "%H:%M")
+         btc.price = response['data']['BTC']['quote']['BRL']['price']
+         eth.price = response['data']['ETH']['quote']['BRL']['price']
+                  
+         btc.formatted = round(btc.price,2)
+         eth.formatted = round(eth.price,2)
          
-         newBtcPrice = response['data']['BTC']['quote']['BRL']['price']
-         newEthPrice = response['data']['ETH']['quote']['BRL']['price']
-         # print(f'bitcoin: {btcPrice} | eth: {ethPrice}')
+         print(f'  BTC - from: R${oldBtc.formatted}\tto: R${btc.formatted}')
+         print(f'  ETH - from: R${oldEth.formatted}\tto: R${eth.formatted}')
          
-
-         newBtcRounded = round(newBtcPrice,2)
-         newEthRounded = round(newEthPrice,2)
-
-         print(f'  BTC - from: R${btcRounded}\tto: R${newBtcRounded}')
-         print(f'  ETH - from: R${ethRounded}\tto: R${newEthRounded}')
-         
-         # check if new hash is same as the previous hash
-         if newBtcPrice == btcPrice or newEthPrice == ethPrice:
-            time.sleep(650)
+         if btc.price == oldBtc.price and eth.price == oldEth.price:
+            time.sleep(WAIT_REQUEST)
             
             continue
 
-         # if something changed in the hashes
          else:
             # notify
             print('[ PRICES CHANGED ]')
-            
-            if not newBtcPrice == btcPrice:
-               varianceBtc = round(calculate_variance(btcPrice, newBtcPrice), 4)
-               varianceOutputBtc = "{:.4f}".format(varianceBtc)
-               cryptoLogger.info(f'BTC\t{varianceOutputBtc}%\tR$ {newBtcRounded}')
-               differenceBtc = round(newBtcPrice - btcPrice,2)
-               
-               if varianceBtc > 0.005 or varianceBtc < -0.005:
-                  if newBtcPrice > btcPrice:
-                     print('  BTC - tweeting price up...\t\t\t[  OK  ]')
-                     tweet(f'\U0001F60A [BTC] Bitcoin has gone up\n\U0001F4B5 R${newBtcRounded}\n\U0001F4C8 Variance +{varianceOutputBtc}%  +R${differenceBtc}\n\nUpdated at {req}h')
-                  else:
-                     print('  BTC - tweeting price down...\t\t\t[  OK  ]')
-                     differenceBtc *= -1
-                     tweet(f'\U0001F633 [BTC] Bitcoin has gone down\n\U0001F4B5 R${newBtcRounded}\n\U0001F4C9 Variance {varianceOutputBtc}%  -R${differenceBtc}\n\nUpdated at {req}h')
-               
-                  btcPrice = newBtcPrice
-                  btcRounded = round(newBtcPrice,2)
-                  
-               else:
-                  print(f'  BTC - Not enough variance\t{abs(varianceBtc)}%\t\t[ FAIL ]')
-               
-            if not newEthPrice == ethPrice:
-               varianceEth = round(calculate_variance(ethPrice, newEthPrice), 4)          
-               varianceOutputEth = "{:.4f}".format(varianceEth)
-               cryptoLogger.info(f'ETH\t{varianceOutputEth}%\tR$ {newEthRounded}')
-               differenceEth = round(newEthPrice - ethPrice,2)
-               
-               if varianceEth > 0.007 or varianceEth < -0.007:
-                  if newEthPrice > ethPrice:
-                     print('  ETH - tweeting price up...\t\t\t[  OK  ]')
-                     tweet(f'\U0001F60A [ETH] Ethereum has gone up\n\U0001F4B5 R${newEthRounded}\n\U0001F4C8 Variance +{varianceOutputEth}%  +R${differenceEth}\n\nUpdated at {req}h')
-                  else:
-                     print('  ETH - tweeting price down...\t\t\t[  OK  ]')
-                     tweet(f'\U0001F633 [ETH] Ethereum has gone down\n\U0001F4B5 R${newEthRounded}\n\U0001F4C9 Variance {varianceOutputEth}%  -R${differenceEth}\n\nUpdated at {req}h')
-               
-                  ethPrice = newEthPrice
-                  ethRounded = round(newEthPrice,2)
-               else:
-                  print(f'  ETH - Not enough variance\t{abs(varianceEth)}%\t\t[ FAIL ]')
-            
-            time.sleep(650)
+
+            checkChanges(btc, oldBtc)
+            checkChanges(eth, oldEth)   
+
+            time.sleep(WAIT_REQUEST)
             
             continue
          

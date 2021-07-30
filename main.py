@@ -10,7 +10,7 @@ class fetchThread(threading.Thread):
 
    def run(self):
       print("Starting " + self.crypto) 
-      fetch_crypto(self.crypto)
+      fetch_crypto()
       print("Exiting " + self.crypto)
 
 thread1 = fetchThread('bitcoin')
