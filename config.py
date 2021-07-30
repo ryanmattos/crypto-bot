@@ -48,10 +48,10 @@ def reply(status):
    tweet = status.text.replace("@cryptobipolar_ ", "")
    user = status.user.screen_name
    statusId = status.id
-   
-   if tweet.lower() == "btc":
+      
+   if "btc" in tweet.lower():
       print(f'[ REPLY ]\nReplying user @{user} about BTC')
       api.update_status(f'\U0001F60A [{btc.slug}] {btc.name} price\n\U0001F4B5 R${btc.formatted}\n\nLast update at {btc.lastRequest}h', in_reply_to_status_id=statusId, auto_populate_reply_metadata=True)
-   elif tweet.lower() == "eth":
+   elif "eth" in tweet.lower():
       print(f'[ REPLY ]\nReplying user @{user} about ETH')
       api.update_status(f'\U0001F60A [{eth.slug}] {eth.name} price\n\U0001F4B5 R${eth.formatted}\n\nLast update at {eth.lastRequest}h', in_reply_to_status_id=statusId, auto_populate_reply_metadata=True)
