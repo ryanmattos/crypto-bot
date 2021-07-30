@@ -1,17 +1,32 @@
 import os
 import tweepy
 import logging
+from crypto import btc, eth
 
 logging.basicConfig(filename='logs/.log', filemode='w', format='%(asctime)s:: %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger()
 
+class TweetStreamListener(tweepy.StreamListener):
+   def on_status(self, status):
+      reply(status)
+      
+   def on_error(self, status_code):
+      if status_code == 420:
+         #returning False in on_error disconnects the stream
+         return False
+
 def create_api():
    auth = tweepy.OAuthHandler(os.environ['API_KEY'], os.environ['API_SECRET'])
    auth.set_access_token(os.environ['ACCESS_TOKEN'], os.environ['ACCESS_TOKEN_SECRET'])
+   
+   tweetListener = TweetStreamListener()
 
    # Create API object
    api = tweepy.API(auth, wait_on_rate_limit=True,
       wait_on_rate_limit_notify=True)
+   tweetStream = tweepy.Stream(auth, listener=tweetListener)
+   
+   tweetStream.filter(track=['@cryptobipolar_'], is_async=True)
 
    try:
       api.verify_credentials()
@@ -26,3 +41,17 @@ def create_api():
    return api
 
 create_api()
+
+def reply(status):
+   api = create_api()
+   
+   tweet = status.text.replace("@cryptobipolar_ ", "")
+   user = status.user.screen_name
+   statusId = status.id
+   
+   if tweet.lower() == "btc":
+      print(f'[ REPLY ]\nReplying user @{user} about BTC')
+      api.update_status(f'\U0001F60A [{btc.slug}] {btc.name} price\n\U0001F4B5 R${btc.formatted}\n\nLast update at {btc.lastRequest}h', in_reply_to_status_id=statusId, auto_populate_reply_metadata=True)
+   elif tweet.lower() == "eth":
+      print(f'[ REPLY ]\nReplying user @{user} about ETH')
+      api.update_status(f'\U0001F60A [{eth.slug}] {eth.name} price\n\U0001F4B5 R${eth.formatted}\n\nLast update at {eth.lastRequest}h', in_reply_to_status_id=statusId, auto_populate_reply_metadata=True)

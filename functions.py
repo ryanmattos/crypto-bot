@@ -32,3 +32,4 @@ def checkChanges(crypto, oldCrypto):
          
       else:
          print(f'  {crypto.slug} - Not enough variance\t{abs(variance)}%\t\t[ FAIL ]')
+      
