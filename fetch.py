@@ -48,38 +48,38 @@ def fetch_crypto():
    
    print("running")
    time.sleep(WAIT_REQUEST)
-   # while True:
-   #    try:         
-   #       print("\n[ FETCHING INFO ]")
-   #       response = requests.get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest',params=params, headers={'X-CMC_PRO_API_KEY': os.environ['CMC_API_KEY']}).json()
+   while True:
+      try:         
+         print("\n[ FETCHING INFO ]")
+         response = requests.get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest',params=params, headers={'X-CMC_PRO_API_KEY': os.environ['CMC_API_KEY']}).json()
          
-   #       btc.price = response['data']['BTC']['quote']['BRL']['price']
-   #       eth.price = response['data']['ETH']['quote']['BRL']['price']
+         btc.price = response['data']['BTC']['quote']['BRL']['price']
+         eth.price = response['data']['ETH']['quote']['BRL']['price']
                   
-   #       btc.formatted = round(btc.price,2)
-   #       eth.formatted = round(eth.price,2)
+         btc.formatted = round(btc.price,2)
+         eth.formatted = round(eth.price,2)
          
-   #       print(f'  BTC - from: R${oldBtc.formatted}\tto: R${btc.formatted}')
-   #       print(f'  ETH - from: R${oldEth.formatted}\tto: R${eth.formatted}')
+         print(f'  BTC - from: R${oldBtc.formatted}\tto: R${btc.formatted}')
+         print(f'  ETH - from: R${oldEth.formatted}\tto: R${eth.formatted}')
          
-   #       if btc.price == oldBtc.price and eth.price == oldEth.price:
-   #          time.sleep(WAIT_REQUEST)
+         if btc.price == oldBtc.price and eth.price == oldEth.price:
+            time.sleep(WAIT_REQUEST)
             
-   #          continue
+            continue
 
-   #       else:
-   #          # notify
-   #          print('[ PRICES CHANGED ]')
+         else:
+            # notify
+            print('[ PRICES CHANGED ]')
 
-   #          checkChanges(btc, oldBtc)
-   #          checkChanges(eth, oldEth)   
+            checkChanges(btc, oldBtc)
+            checkChanges(eth, oldEth)   
 
-   #          time.sleep(WAIT_REQUEST)
+            time.sleep(WAIT_REQUEST)
             
-   #          continue
+            continue
          
                
-   #    # To handle exceptions
-   #    except Exception as e:
-   #       print(f"error {e}")
+      # To handle exceptions
+      except Exception as e:
+         print(f"error {e}")
 
