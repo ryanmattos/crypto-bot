@@ -9,6 +9,7 @@ from crypto import Crypto, btc, eth, oldEth, oldBtc
 from functions import checkChanges
 
 WAIT_REQUEST = 600
+CURRENCY_SLUG = 'U$'
 
 def fetch_crypto():
    cryptoLogging.basicConfig(filename='logs/cryptos.log', filemode='w', format='%(asctime)s:: %(message)s', level=cryptoLogging.INFO)
@@ -43,8 +44,8 @@ def fetch_crypto():
    eth.formatted = ethRounded
    eth.lastRequest = req
    
-   cryptoLogger.info(f'FIRST LOG: BTC\tR${btcRounded}')
-   cryptoLogger.info(f'FIRST LOG: ETH\tR${ethRounded}')
+   cryptoLogger.info(f'FIRST LOG: BTC\t{CURRENCY_SLUG}{btcRounded}')
+   cryptoLogger.info(f'FIRST LOG: ETH\t{CURRENCY_SLUG}{ethRounded}')
    
    print("running")
    time.sleep(WAIT_REQUEST)
@@ -53,14 +54,14 @@ def fetch_crypto():
          print("\n[ FETCHING INFO ]")
          response = requests.get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest',params=params, headers={'X-CMC_PRO_API_KEY': os.environ['CMC_API_KEY']}).json()
          
-         btc.price = response['data']['BTC']['quote']['BRL']['price']
-         eth.price = response['data']['ETH']['quote']['BRL']['price']
+         btc.price = response['data']['BTC']['quote']['USD']['price']
+         eth.price = response['data']['ETH']['quote']['USD']['price']
                   
          btc.formatted = round(btc.price,2)
          eth.formatted = round(eth.price,2)
          
-         print(f'  BTC - from: R${oldBtc.formatted}\tto: R${btc.formatted}')
-         print(f'  ETH - from: R${oldEth.formatted}\tto: R${eth.formatted}')
+         print(f'  BTC - from: R${oldBtc.formatted}\tto: {CURRENCY_SLUG}{btc.formatted}')
+         print(f'  ETH - from: R${oldEth.formatted}\tto: {CURRENCY_SLUG}{eth.formatted}')
          
          if btc.price == oldBtc.price and eth.price == oldEth.price:
             time.sleep(WAIT_REQUEST)
