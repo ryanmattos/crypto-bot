@@ -20,11 +20,11 @@ def checkChanges(crypto, oldCrypto):
       if variance > crypto.cap or variance < crypto.cap * -1:
          if crypto.price > oldCrypto.price:
             print(f'  {crypto.slug} - tweeting price up...\t\t\t[  OK  ]')
-            tweet(f'\U0001F60A [{crypto.slug}] {crypto.name} has gone up\n\U0001F4B5 R${crypto.formatted}\n\U0001F4C8 Variance +{crypto.variance}%  +R${diff}\n\nUpdated at {req}h')
+            tweet(f'\U0001F60A [{crypto.slug}] {crypto.name} has gone up\n\U0001F4B5 ${crypto.formatted}\n\U0001F4C8 Variance +{crypto.variance}%  +${diff}\n\nUpdated at {req}h')
          else:
             print(f'  {crypto.slug} - tweeting price down...\t\t\t[  OK  ]')
             diff *= -1
-            tweet(f'\U0001F633 [{crypto.slug}] {crypto.name} has gone down\n\U0001F4B5 R${crypto.formatted}\n\U0001F4C9 Variance {crypto.variance}%  -R${diff}\n\nUpdated at {req}h')
+            tweet(f'\U0001F633 [{crypto.slug}] {crypto.name} has gone down\n\U0001F4B5 ${crypto.formatted}\n\U0001F4C9 Variance {crypto.variance}%  -${diff}\n\nUpdated at {req}h')
          
          oldCrypto.price = crypto.price
          oldCrypto.formatted = crypto.formatted
