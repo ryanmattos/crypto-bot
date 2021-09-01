@@ -15,7 +15,7 @@ def fetch_crypto():
    cryptoLogging.basicConfig(filename='logs/cryptos.log', filemode='w', format='%(asctime)s:: %(message)s', level=cryptoLogging.INFO)
    cryptoLogger = cryptoLogging.getLogger()
 
-   params = {'symbol': 'btc,eth', 'convert': 'USD'}
+   params = {'symbol': 'btc,eth,ada,doge', 'convert': 'USD'}
    response = requests.get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest',params=params, headers={'X-CMC_PRO_API_KEY': os.environ['CMC_API_KEY']}).json()
    
    tz = pytz.timezone('Brazil/East')
