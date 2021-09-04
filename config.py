@@ -45,19 +45,20 @@ create_api()
 def reply(status):
    api = create_api()
    
-   tweet = status.text.replace("@cryptobipolar_ ", "")
+   tweet = status.text
    user = status.user.screen_name
    statusId = status.id
-      
-   if "btc" in tweet.lower():
-      print(f'[ REPLY ]\nReplying user @{user} about BTC')
-      api.update_status(f'\U0001F60A [{btc.slug}] {btc.name} price\n\U0001F4B5 ${btc.formatted}\n\nLast update at {btc.lastRequest}h', in_reply_to_status_id=statusId, auto_populate_reply_metadata=True)
-   elif "eth" in tweet.lower():
-      print(f'[ REPLY ]\nReplying user @{user} about ETH')
-      api.update_status(f'\U0001F60A [{eth.slug}] {eth.name} price\n\U0001F4B5 ${eth.formatted}\n\nLast update at {eth.lastRequest}h', in_reply_to_status_id=statusId, auto_populate_reply_metadata=True)
-   elif "doge" in tweet.lower():
-      print(f'[ REPLY ]\nReplying user @{user} about DOGE')
-      api.update_status(f'\U0001F60A [{dog.slug}] {dog.name} price\n\U0001F4B5 ${dog.formatted}\n\nLast update at {dog.lastRequest}h', in_reply_to_status_id=statusId, auto_populate_reply_metadata=True)
-   elif "ada" in tweet.lower():
-      print(f'[ REPLY ]\nReplying user @{user} about ADA')
-      api.update_status(f'\U0001F60A [{ada.slug}] {ada.name} price\n\U0001F4B5 ${ada.formatted}\n\nLast update at {ada.lastRequest}h', in_reply_to_status_id=statusId, auto_populate_reply_metadata=True)
+   
+   if "@cryptobipolar_" in tweet.lower():
+      if "btc" in tweet.lower():
+         print(f'[ REPLY ]\nReplying user @{user} about BTC')
+         api.update_status(f'\U0001F60A [{btc.slug}] {btc.name} price\n\U0001F4B5 ${btc.formatted}\n\nLast update at {btc.lastRequest}h', in_reply_to_status_id=statusId, auto_populate_reply_metadata=True)
+      elif "eth" in tweet.lower():
+         print(f'[ REPLY ]\nReplying user @{user} about ETH')
+         api.update_status(f'\U0001F60A [{eth.slug}] {eth.name} price\n\U0001F4B5 ${eth.formatted}\n\nLast update at {eth.lastRequest}h', in_reply_to_status_id=statusId, auto_populate_reply_metadata=True)
+      elif "doge" in tweet.lower():
+         print(f'[ REPLY ]\nReplying user @{user} about DOGE')
+         api.update_status(f'\U0001F60A [{dog.slug}] {dog.name} price\n\U0001F4B5 ${dog.formatted}\n\nLast update at {dog.lastRequest}h', in_reply_to_status_id=statusId, auto_populate_reply_metadata=True)
+      elif "ada" in tweet.lower():
+         print(f'[ REPLY ]\nReplying user @{user} about ADA')
+         api.update_status(f'\U0001F60A [{ada.slug}] {ada.name} price\n\U0001F4B5 ${ada.formatted}\n\nLast update at {ada.lastRequest}h', in_reply_to_status_id=statusId, auto_populate_reply_metadata=True)
