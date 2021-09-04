@@ -30,7 +30,7 @@ def fetch_crypto():
    btcRounded = round(btcPrice,2)
    ethRounded = round(ethPrice,2)
    adaRounded = round(adaPrice,2)
-   dogRounded = round(dogPrice,2)
+   dogRounded = round(dogPrice,4)
    
 
    # #set the old btc now
@@ -83,7 +83,7 @@ def fetch_crypto():
          btc.formatted = round(btc.price,2)
          eth.formatted = round(eth.price,2)
          ada.formatted = round(ada.price,2)
-         dog.formatted = round(dog.price,2)
+         dog.formatted = round(dog.price,4)
                   
          print(f'  BTC - from: R${oldBtc.formatted}\tto: {CURRENCY_SLUG}{btc.formatted}')
          print(f'  ETH - from: R${oldEth.formatted}\tto: {CURRENCY_SLUG}{eth.formatted}')
