@@ -16,9 +16,9 @@ def checkChanges(crypto, oldCrypto):
       variance = round(calculate_variance(oldCrypto.price, crypto.price), 4)
       crypto.variance = "{:.4f}".format(variance)
       if crypto.slug == "DOGE":
-         diff = round(crypto.price - oldCrypto.price, 2)
-      else:
          diff = round(crypto.price - oldCrypto.price, 3)
+      else:
+         diff = round(crypto.price - oldCrypto.price, 2)
          
       if variance > crypto.cap or variance < crypto.cap * -1:
          if crypto.price > oldCrypto.price:
