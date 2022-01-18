@@ -38,7 +38,7 @@ def checkChanges(crypto):
          print(f'  {crypto.slug} - Not enough variance\t{abs(variance)}%\t\t[ FAIL ]')
          
 def overview(cryptos):
-   content = f'[ OVERVIEW 24HRS ]'
+   content = f'[ OVERVIEW 24HRS ]\n'
    content += f'This is the rank of cryptos by percentual variance.\n\n'
    
    cryptos.sort(key = lambda x: round(calculate_variance(x.first.price, x.price), 4))
@@ -63,7 +63,7 @@ def overview(cryptos):
    print(f'{cryptos[0].slug} has raised the most\tU${cryptos[0].price}\t\t[ COOL ]')
    tweet(content)
    
-   content = f'[ OVERVIEW 24HRS ]'
+   content = f'[ OVERVIEW 24HRS ]\n'
    content += f'This is the rank of cryptos by price variance.\n\n'
    
    cryptos.sort(key = lambda x: abs(round(x.first.price - x.price, 4)))
