@@ -1,72 +1,42 @@
 import os
 import time
-# from urllib.request import urlopen, Request, build_opener, HTTPCookieProcessor
 import requests
 import pytz
 from datetime import datetime
 import logging as cryptoLogging
-from crypto import Crypto, btc, eth, ada, dog, oldEth, oldBtc, oldAda, oldDog
-from functions import checkChanges
+from crypto import Crypto, btc, eth, ada, dog
+from functions import checkChanges, overview
 
 WAIT_REQUEST = 600
 CURRENCY_SLUG = 'U$'
 
 def fetch_crypto():
+   cryptos = [btc, eth, ada, dog]
+   
    cryptoLogging.basicConfig(filename='logs/cryptos.log', filemode='w', format='%(asctime)s:: %(message)s', level=cryptoLogging.INFO)
    cryptoLogger = cryptoLogging.getLogger()
 
    params = {'symbol': 'btc,eth,ada,doge', 'convert': 'USD'}
    response = requests.get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest',params=params, headers={'X-CMC_PRO_API_KEY': os.environ['CMC_API_KEY']}).json()
-   
-   tz = pytz.timezone('Brazil/East')
+
+   tz = pytz.timezone('America/Los_Angeles')
    dt = datetime.now(tz)
    req = datetime.strftime(dt, "%H:%M")
    
-   btcPrice = response['data']['BTC']['quote']['USD']['price']
-   ethPrice = response['data']['ETH']['quote']['USD']['price'] 
-   adaPrice = response['data']['ADA']['quote']['USD']['price'] 
-   dogPrice = response['data']['DOGE']['quote']['USD']['price'] 
-   
-   btcRounded = round(btcPrice,2)
-   ethRounded = round(ethPrice,2)
-   adaRounded = round(adaPrice,2)
-   dogRounded = round(dogPrice,4)
-   
-
-   # #set the old btc now
-   oldBtc.price = btcPrice
-   oldBtc.formatted = btcRounded
-   
-   oldEth.price = ethPrice
-   oldEth.formatted = ethRounded
-   
-   oldAda.price = adaPrice
-   oldAda.formatted = adaRounded
-   
-   oldDog.price = dogPrice
-   oldDog.formatted = dogRounded
+   for crypto in cryptos:
+      price = response['data'][crypto.slug]['quote']['USD']['price']
+      rounded = round(price, 4 if crypto.slug == 'DOGE' else 2)
+      crypto.old.price = price
+      crypto.old.formatted = rounded
       
-   # #set the cryptos that will be the latest ones
-   btc.price = btcPrice
-   btc.formatted = btcRounded
-   btc.lastRequest = req
-   
-   eth.price = ethPrice
-   eth.formatted = ethRounded
-   eth.lastRequest = req
-   
-   ada.price = adaPrice
-   ada.formatted = adaRounded
-   ada.lastRequest = req
-   
-   dog.price = dogPrice
-   dog.formatted = dogRounded
-   dog.lastRequest = req
-   
-   cryptoLogger.info(f'FIRST LOG: BTC\t{CURRENCY_SLUG}{btcRounded}')
-   cryptoLogger.info(f'FIRST LOG: ETH\t{CURRENCY_SLUG}{ethRounded}')
-   cryptoLogger.info(f'FIRST LOG: ETH\t{CURRENCY_SLUG}{adaRounded}')
-   cryptoLogger.info(f'FIRST LOG: ETH\t{CURRENCY_SLUG}{dogRounded}')
+      crypto.first.price = price
+      crypto.first.formatted = rounded
+      
+      crypto.price = price
+      crypto.formatted = rounded
+      crypto.lastRequest = req
+      
+      cryptoLogger.info(f'FIRST LOG: {crypto.slug}\t{CURRENCY_SLUG}{rounded}')
    
    print("running")
    time.sleep(WAIT_REQUEST)
@@ -74,23 +44,17 @@ def fetch_crypto():
       try:         
          print("\n[ FETCHING INFO ]")
          response = requests.get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest',params=params, headers={'X-CMC_PRO_API_KEY': os.environ['CMC_API_KEY']}).json()
+         newDt = datetime.now(tz)
          
-         btc.price = response['data']['BTC']['quote']['USD']['price']
-         eth.price = response['data']['ETH']['quote']['USD']['price']
-         ada.price = response['data']['ADA']['quote']['USD']['price']
-         dog.price = response['data']['DOGE']['quote']['USD']['price']
-                  
-         btc.formatted = round(btc.price,2)
-         eth.formatted = round(eth.price,2)
-         ada.formatted = round(ada.price,2)
-         dog.formatted = round(dog.price,4)
-                  
-         print(f'  BTC - from: R${oldBtc.formatted}\tto: {CURRENCY_SLUG}{btc.formatted}')
-         print(f'  ETH - from: R${oldEth.formatted}\tto: {CURRENCY_SLUG}{eth.formatted}')
-         print(f'  ADA - from: R${oldAda.formatted}\tto: {CURRENCY_SLUG}{ada.formatted}')
-         print(f'  DOGE - from: R${oldDog.formatted}\tto: {CURRENCY_SLUG}{dog.formatted}')
+         for crypto in cryptos:
+            crypto.price = response['data'][crypto.slug]['quote']['USD']['price']
+            crypto.formatted = round(crypto.price, 4 if crypto.slug == 'DOGE' else 2)
+            print(f'  {crypto.slug} - from: {CURRENCY_SLUG}{crypto.old.formatted}\tto: {CURRENCY_SLUG}{crypto.formatted}')
          
-         if btc.price == oldBtc.price and eth.price == oldEth.price and ada.price == oldAda.price and dog.price == oldDog.price:
+         if btc.price == btc.old.price and eth.price == eth.old.price and ada.price == ada.old.price and dog.price == dog.old.price:
+            if isAnotherDay(dt, newDt):
+               overview(cryptos)
+               
             time.sleep(WAIT_REQUEST)
             
             continue
@@ -99,11 +63,15 @@ def fetch_crypto():
             # notify
             print('[ PRICES CHANGED ]')
 
-            checkChanges(btc, oldBtc)
-            checkChanges(eth, oldEth)  
-            checkChanges(ada, oldAda)
-            checkChanges(dog, oldDog)
-
+            for crypto in cryptos:
+               checkChanges(crypto)
+           
+            if isAnotherDay(dt, newDt):
+               print('[ ANOTHER DAY, PRINT OVERVIEW ]')
+               overview(cryptos)
+            else:
+               print(f'[ SAME DAY {dt.day} != {newDt.day}, KEEP GOING ]')
+               
             time.sleep(WAIT_REQUEST)
             
             continue
@@ -113,3 +81,6 @@ def fetch_crypto():
       except Exception as e:
          print(f"error {e}")
 
+def isAnotherDay(date, newDate):
+   print('\n[ CHECKING DAY ]\n')
+   return date.day != newDate.day
